@@ -61,7 +61,8 @@ source venv/bin/activate
 
 ### 3. Instalar dependencias
 ```bash
-pip install django pillow
+pip install django 
+pip install pillow
 ```
 
 ### 4. Crear estructura de carpetas para media
@@ -142,7 +143,7 @@ restaurant_management/
 └── README.md
 ```
 
-## 🎮 Funcionalidades Principales
+## Funcionalidades Principales
 
 ### Gestión de Mesas
 - ✅ CRUD completo de mesas
@@ -228,7 +229,7 @@ Para probar el sistema completo:
 5. **Observa nuevamente** → Más notificaciones
 6. **Login como caja1** → Procesar el pago
 
-## 🐛 Solución de Problemas
+## Solución de Problemas
 
 ### Error: "No module named 'restaurant'"
 ```bash
