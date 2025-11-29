@@ -67,7 +67,8 @@ source venv/bin/activate
 
 ## ✅ PASO 3: INSTALAR DEPENDENCIAS
 ```bash
-pip install django pillow
+pip install django 
+pip install pillow
 ```
 
 Espera a que termine la instalación.
