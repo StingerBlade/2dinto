@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Mesas - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-grid-3x3"></i> Gestión de Mesas</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:crear_mesa' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nueva Mesa
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for mesa in mesas %}
+    <div class="col-md-3 mb-3">
+        <div class="card {% if mesa.pedido_activo %}border-warning{% endif %}">
+            <div class="card-body text-center">
+                <div class="display-4 mb-3">
+                    {% if mesa.pedido_activo %}
+                        <i class="bi bi-table text-warning"></i>
+                    {% else %}
+                        <i class="bi bi-table text-success"></i>
+                    {% endif %}
+                </div>
+                
+                <h4>Mesa {{ mesa.numero }}</h4>
+                <p class="text-muted mb-2">
+                    <i class="bi bi-people"></i> {{ mesa.capacidad }} personas
+                </p>
+                <p class="text-muted mb-3">
+                    <i class="bi bi-geo-alt"></i> {{ mesa.ubicacion }}
+                </p>
+                
+                {% if mesa.pedido_activo %}
+                    <span class="badge bg-warning mb-3">Ocupada</span>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'restaurant:detalle_pedido' mesa.pedido_activo.id %}" 
+                           class="btn btn-sm btn-warning">
+                            <i class="bi bi-receipt"></i> Ver Pedido #{{ mesa.pedido_activo.id }}
+                        </a>
+                    </div>
+                {% else %}
+                    <span class="badge bg-success mb-3">Disponible</span>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'restaurant:crear_pedido_mesa' mesa.id %}" 
+                           class="btn btn-sm btn-success">
+                            <i class="bi bi-plus"></i> Crear Pedido
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{% url 'restaurant:editar_mesa' mesa.id %}" 
+                       class="btn btn-sm btn-outline-primary flex-fill">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'restaurant:eliminar_mesa' mesa.id %}" 
+                       class="btn btn-sm btn-outline-danger flex-fill">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No hay mesas registradas. 
+            <a href="{% url 'restaurant:crear_mesa' %}">Crear la primera mesa</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

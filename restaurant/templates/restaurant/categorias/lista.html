@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-tags"></i> Gestión de Categorías</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:crear_categoria' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nueva Categoría
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Platillos</th>
+                        <th>Fecha Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in categorias %}
+                    <tr>
+                        <td><strong>{{ categoria.nombre }}</strong></td>
+                        <td>{{ categoria.descripcion|truncatewords:10 }}</td>
+                        <td>
+                            {% if categoria.activo %}
+                                <span class="badge bg-success">Activa</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ categoria.platillos.count }} platillos</span>
+                        </td>
+                        <td>{{ categoria.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'restaurant:editar_categoria' categoria.id %}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'restaurant:eliminar_categoria' categoria.id %}" 
+                                   class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <i class="bi bi-inbox"></i> No hay categorías registradas. 
+                            <a href="{% url 'restaurant:crear_categoria' %}">Crear la primera categoría</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

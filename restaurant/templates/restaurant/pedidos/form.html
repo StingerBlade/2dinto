@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ accion }} Pedido - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-receipt"></i> {{ accion }} Pedido</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:lista_pedidos' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Información del Pedido
+                <span class="badge bg-primary float-end">Patrón Observer</span>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-lightbulb"></i> 
+                        <strong>Nota:</strong> Después de crear el pedido, podrás agregar platillos.
+                        El sistema notificará automáticamente a cocina (Patrón Observer).
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Crear Pedido
+                        </button>
+                        <a href="{% url 'restaurant:lista_pedidos' %}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Información
+            </div>
+            <div class="card-body">
+                <h6>Patrón Observer en acción:</h6>
+                <p class="small">Al crear este pedido, se notificará automáticamente a:</p>
+                <ul class="small">
+                    <li><i class="bi bi-check-circle text-success"></i> Cocina</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Meseros</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Administrador</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

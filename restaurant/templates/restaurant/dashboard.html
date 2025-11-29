@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-calendar"></i> Hoy
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pedidos Hoy</h6>
+                        <h2 class="mb-0">{{ total_pedidos_hoy }}</h2>
+                    </div>
+                    <div class="text-primary">
+                        <i class="bi bi-receipt display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pedidos Activos</h6>
+                        <h2 class="mb-0">{{ pedidos_activos }}</h2>
+                    </div>
+                    <div class="text-warning">
+                        <i class="bi bi-hourglass-split display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Ventas Hoy</h6>
+                        <h2 class="mb-0">${{ total_ventas_hoy|floatformat:2 }}</h2>
+                    </div>
+                    <div class="text-success">
+                        <i class="bi bi-cash-coin display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card stat-card info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Mesas Ocupadas</h6>
+                        <h2 class="mb-0">{{ mesas_ocupadas }}</h2>
+                    </div>
+                    <div class="text-info">
+                        <i class="bi bi-grid-3x3 display-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos rápidos -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning-charge"></i> Accesos Rápidos
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'restaurant:lista_mesas' %}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="bi bi-grid-3x3 display-6"></i>
+                            <div class="mt-2">Ver Mesas</div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'restaurant:crear_pedido' %}" class="btn btn-outline-success w-100 py-3">
+                            <i class="bi bi-plus-circle display-6"></i>
+                            <div class="mt-2">Nuevo Pedido</div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'restaurant:lista_pedidos' %}" class="btn btn-outline-warning w-100 py-3">
+                            <i class="bi bi-receipt-cutoff display-6"></i>
+                            <div class="mt-2">Pedidos Activos</div>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'restaurant:lista_platillos' %}" class="btn btn-outline-info w-100 py-3">
+                            <i class="bi bi-egg-fried display-6"></i>
+                            <div class="mt-2">Menú</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información del restaurante (Singleton) -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Información del Restaurante
+                <span class="badge bg-primary float-end">Patrón Singleton</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Nombre:</strong> {{ config.get_nombre_restaurante }}</p>
+                        <p><strong>Dirección:</strong> {{ config.get_direccion }}</p>
+                        <p><strong>Teléfono:</strong> {{ config.get_telefono }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Horario:</strong> {{ config.get_horario }}</p>
+                        <p><strong>Impuesto (IVA):</strong> {{ config.get_impuesto|floatformat:2 }}%</p>
+                        <p><strong>Capacidad Máxima:</strong> {{ config.get_capacidad_maxima }} personas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Agregar Item - Pedido #{{ pedido.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-plus-circle"></i> Agregar Item al Pedido #{{ pedido.id }}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:detalle_pedido' pedido.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-egg-fried"></i> Seleccionar Platillo
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-bell"></i> 
+                        Al agregar este item, se notificará automáticamente a cocina (Patrón Observer).
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-plus-circle"></i> Agregar al Pedido
+                        </button>
+                        <a href="{% url 'restaurant:detalle_pedido' pedido.id %}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-receipt"></i> Resumen del Pedido
+            </div>
+            <div class="card-body">
+                <p><strong>Mesa:</strong> {{ pedido.mesa.numero }}</p>
+                <p><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
+                <p><strong>Total actual:</strong> ${{ pedido.total|floatformat:2 }}</p>
+                
+                <hr>
+                
+                <h6>Items actuales:</h6>
+                <ul class="list-group list-group-flush">
+                    {% for item in pedido.items.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ item.platillo.nombre }}
+                            <span class="badge bg-primary rounded-pill">{{ item.cantidad }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No hay items</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-gear"></i> Configuración del Restaurante</h1>
+    <span class="badge bg-primary" style="font-size: 1rem;">Patrón Singleton</span>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-lightbulb"></i> 
+    <strong>Patrón Singleton:</strong> Esta configuración es única en todo el sistema. 
+    Cualquier cambio afectará a todas las operaciones del restaurante.
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-sliders"></i> Parámetros del Sistema
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="nombre_restaurante" class="form-label">Nombre del Restaurante</label>
+                        <input type="text" class="form-control" id="nombre_restaurante" 
+                               name="nombre_restaurante" value="{{ config.get_nombre_restaurante }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="horario" class="form-label">Horario de Operación</label>
+                        <input type="text" class="form-control" id="horario" 
+                               name="horario" value="{{ config.get_horario }}" required>
+                        <small class="text-muted">Ejemplo: 9:00 AM - 11:00 PM</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="impuesto" class="form-label">Impuesto (IVA) %</label>
+                            <input type="number" class="form-control" id="impuesto" 
+                                   name="impuesto" step="0.1" min="0" max="100" 
+                                   value="{{ config.get_impuesto|floatformat:1 }}" required>
+                            <small class="text-muted">Actual: {{ config.get_impuesto|floatformat:1 }}%</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="propina_sugerida" class="form-label">Propina Sugerida %</label>
+                            <input type="number" class="form-control" id="propina_sugerida" 
+                                   name="propina_sugerida" step="0.1" min="0" max="100" 
+                                   value="{{ config.get_propina_sugerida|floatformat:1 }}" required>
+                            <small class="text-muted">Actual: {{ config.get_propina_sugerida|floatformat:1 }}%</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="capacidad_maxima" class="form-label">Capacidad Máxima (personas)</label>
+                        <input type="number" class="form-control" id="capacidad_maxima" 
+                               name="capacidad_maxima" min="1" 
+                               value="{{ config.get_capacidad_maxima }}" required>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Guardar Configuración
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Información Actual
+            </div>
+            <div class="card-body">
+                <p><strong>Restaurante:</strong><br>{{ config.get_nombre_restaurante }}</p>
+                <p><strong>Dirección:</strong><br>{{ config.get_direccion }}</p>
+                <p><strong>Teléfono:</strong><br>{{ config.get_telefono }}</p>
+                <p><strong>Email:</strong><br>{{ config.get_email }}</p>
+                <p><strong>Moneda:</strong> {{ config.get_moneda }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-code-square"></i> Patrón Singleton
+            </div>
+            <div class="card-body">
+                <h6>¿Cómo funciona?</h6>
+                <p class="small">
+                    El patrón Singleton garantiza que solo existe UNA instancia de la configuración 
+                    en todo el sistema.
+                </p>
+                <p class="small mb-0">
+                    <strong>Beneficios:</strong>
+                </p>
+                <ul class="small">
+                    <li>Configuración centralizada</li>
+                    <li>Consistencia en toda la aplicación</li>
+                    <li>Ahorro de memoria</li>
+                    <li>Fácil acceso global</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

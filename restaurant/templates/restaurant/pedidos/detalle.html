@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Pedido #{{ pedido.id }} - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-receipt"></i> Pedido #{{ pedido.id }}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:lista_pedidos' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información del pedido -->
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-info-circle"></i> Información General</span>
+                {% if pedido.estado == 'pendiente' %}
+                    <span class="badge bg-secondary">Pendiente</span>
+                {% elif pedido.estado == 'en_preparacion' %}
+                    <span class="badge bg-warning">En Preparación</span>
+                {% elif pedido.estado == 'listo' %}
+                    <span class="badge bg-info">Listo</span>
+                {% elif pedido.estado == 'entregado' %}
+                    <span class="badge bg-success">Entregado</span>
+                {% elif pedido.estado == 'cancelado' %}
+                    <span class="badge bg-danger">Cancelado</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Mesa:</strong> {{ pedido.mesa.numero }}</p>
+                        <p><strong>Mesero:</strong> {{ pedido.mesero.username }}</p>
+                        <p><strong>Fecha:</strong> {{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
+                        <p><strong>Última actualización:</strong> {{ pedido.fecha_actualizacion|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                {% if pedido.notas_especiales %}
+                    <div class="alert alert-warning mt-3">
+                        <strong>Notas especiales:</strong> {{ pedido.notas_especiales }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Items del pedido -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-list-ul"></i> Items del Pedido</span>
+                {% if pedido.estado not in 'entregado,cancelado' %}
+                    <a href="{% url 'restaurant:agregar_item_pedido' pedido.id %}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus"></i> Agregar Item
+                    </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Platillo</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pedido.items.all %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.platillo.nombre }}</strong>
+                                    {% if item.notas %}
+                                        <br><small class="text-muted">{{ item.notas }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>${{ item.precio_unitario|floatformat:2 }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td><strong>${{ item.subtotal|floatformat:2 }}</strong></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <i class="bi bi-inbox"></i> No hay items en este pedido
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                <td><strong>${{ pedido.subtotal|floatformat:2 }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end">
+                                    <strong>IVA ({{ config.get_impuesto|floatformat:0 }}%):</strong>
+                                    <span class="badge bg-primary">Singleton</span>
+                                </td>
+                                <td><strong>${{ pedido.impuesto|floatformat:2 }}</strong></td>
+                            </tr>
+                            <tr class="table-active">
+                                <td colspan="3" class="text-end"><strong>TOTAL:</strong></td>
+                                <td><h4 class="mb-0">${{ pedido.total|floatformat:2 }}</h4></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagos -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-credit-card"></i> Pagos</span>
+                {% if pedido.estado == 'entregado' and not pedido.pagos.exists %}
+                    <a href="{% url 'restaurant:procesar_pago' pedido.id %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-cash"></i> Procesar Pago
+                    </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if pedido.pagos.exists %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Método</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Referencia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pago in pedido.pagos.all %}
+                                <tr>
+                                    <td>{{ pago.metodo_pago.nombre }}</td>
+                                    <td><strong>${{ pago.monto|floatformat:2 }}</strong></td>
+                                    <td>{{ pago.fecha_pago|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ pago.referencia|default:"N/A" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i> No se han registrado pagos
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="col-md-4">
+        <!-- Cambiar estado -->
+        {% if pedido.estado not in 'entregado,cancelado' %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-arrow-repeat"></i> Cambiar Estado
+                <span class="badge bg-warning float-end">Observer</span>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'restaurant:cambiar_estado_pedido' pedido.id %}">
+                    {% csrf_token %}
+                    <select name="estado" class="form-select mb-2">
+                        {% for key, value in pedido.ESTADOS %}
+                            <option value="{{ key }}" {% if key == pedido.estado %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="bi bi-arrow-repeat"></i> Cambiar Estado
+                    </button>
+                </form>
+                <small class="text-muted mt-2 d-block">
+                    <i class="bi bi-info-circle"></i> Se notificará automáticamente a cocina y meseros
+                </small>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Propina sugerida -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="bi bi-calculator"></i> Propina Sugerida
+                <span class="badge bg-primary float-end">Singleton</span>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">Basada en configuración del restaurante:</p>
+                <h4 class="text-success">${{ propina_sugerida|floatformat:2 }}</h4>
+                <small class="text-muted">
+                    ({{ config.get_propina_sugerida|floatformat:0 }}% del total)
+                </small>
+            </div>
+        </div>
+
+        <!-- Información de patrones -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightbulb"></i> Patrones Aplicados
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <span class="badge bg-primary">Singleton</span>
+                    <p class="small mt-1 mb-0">
+                        Configuración única del restaurante (impuesto, propina)
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <span class="badge bg-warning">Observer</span>
+                    <p class="small mt-1 mb-0">
+                        Notificaciones automáticas a cocina, meseros y administrador
+                    </p>
+                </div>
+                <div>
+                    <span class="badge bg-info">Decorator</span>
+                    <p class="small mt-1 mb-0">
+                        Control de acceso y logging en las vistas
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

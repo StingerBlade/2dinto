@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ accion }} Platillo - Sistema Restaurante{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-egg-fried"></i> {{ accion }} Platillo</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'restaurant:lista_platillos' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                {{ form.nombre.label }}
+                            </label>
+                            {{ form.nombre }}
+                            {% if form.nombre.errors %}
+                                <div class="text-danger">{{ form.nombre.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                {{ form.descripcion.label }}
+                            </label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}
+                                <div class="text-danger">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.categoria.id_for_label }}" class="form-label">
+                                {{ form.categoria.label }}
+                            </label>
+                            {{ form.categoria }}
+                            {% if form.categoria.errors %}
+                                <div class="text-danger">{{ form.categoria.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.precio.id_for_label }}" class="form-label">
+                                {{ form.precio.label }}
+                            </label>
+                            {{ form.precio }}
+                            {% if form.precio.errors %}
+                                <div class="text-danger">{{ form.precio.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.tiempo_preparacion.id_for_label }}" class="form-label">
+                                {{ form.tiempo_preparacion.label }}
+                            </label>
+                            {{ form.tiempo_preparacion }}
+                            {% if form.tiempo_preparacion.errors %}
+                                <div class="text-danger">{{ form.tiempo_preparacion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.imagen.id_for_label }}" class="form-label">
+                                {{ form.imagen.label }}
+                            </label>
+                            {{ form.imagen }}
+                            {% if form.imagen.errors %}
+                                <div class="text-danger">{{ form.imagen.errors }}</div>
+                            {% endif %}
+                            {% if platillo and platillo.imagen %}
+                                <div class="mt-2">
+                                    <img src="{{ platillo.imagen.url }}" alt="{{ platillo.nombre }}" 
+                                         class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                {{ form.disponible }}
+                                <label class="form-check-label" for="{{ form.disponible.id_for_label }}">
+                                    {{ form.disponible.label }}
+                                </label>
+                            </div>
+                            {% if form.disponible.errors %}
+                                <div class="text-danger">{{ form.disponible.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Guardar
+                        </button>
+                        <a href="{% url 'restaurant:lista_platillos' %}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Información
+            </div>
+            <div class="card-body">
+                <h6>Consejos:</h6>
+                <ul class="small">
+                    <li>Usa imágenes de alta calidad para mejorar la presentación</li>
+                    <li>La descripción debe ser clara y apetitosa</li>
+                    <li>Asigna la categoría correcta para facilitar la búsqueda</li>
+                    <li>El tiempo de preparación ayuda a gestionar expectativas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
